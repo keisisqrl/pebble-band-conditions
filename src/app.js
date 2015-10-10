@@ -6,8 +6,7 @@
 
 var UI = require('ui');
 var ajax = require('ajax');
-
-var fail = null;
+var v2 = require('vector2');
 
 
 
@@ -19,7 +18,36 @@ var loading = new UI.Card({
 
 var conds = new UI.Window();
 
-loading.show();
+conds.add(new UI.Rect({position: new v2(0,0), size: new v2(144,166)}));
+
+conds.add(new UI.Text({
+    font: "gothic-18-bold",
+    textAlign: "left",
+    text: "Band",
+    position: new v2(0,0),
+    size: new v2(144,18),
+    color: 'black'
+}));
+
+conds.add(new UI.Text({
+    font: "gothic-18-bold",
+    textAlign: "center",
+    text: "Day",
+    position: new v2(15,0),
+    size: new v2(144,18),
+    color: 'black'
+}));
+
+conds.add(new UI.Text({
+    font: "gothic-18-bold",
+    textAlign: "right",
+    text: "Night",
+    position: new v2(0,0),
+    size: new v2(144,18),
+    color: 'black'
+}));
+
+
 
 function get_data() {
     ajax(
@@ -53,7 +81,76 @@ function render_data(propinfo) {
     console.log(JSON.stringify(conditions));
     var cond_fill = conditions.reduce(reduce_conditions, {});
     console.log(JSON.stringify(cond_fill));
+    var pos = 18;
+    for (var c in cond_fill) {
+        console.log(JSON.stringify(c));
+        conds.add(new UI.Text({
+            font: "gothic-18",
+            textAlign: "left",
+            text: c,
+            position: new v2(0,pos),
+            size: new v2(144,18),
+            color: 'black'
+        }));
+        conds.add(new UI.Text({
+            font: "gothic-18",
+            textAlign: "center",
+            text: cond_fill[c].day,
+            position: new v2(15,pos),
+            size: new v2(144,18),
+            color: 'black'
+        }));
+        conds.add(new UI.Text({
+            font: "gothic-18",
+            textAlign: "right",
+            text: cond_fill[c].night,
+            position: new v2(0,pos),
+            size: new v2(144,18),
+            color: 'black'
+        }));
+        pos += 18;
+    }
+    conds.add(new UI.Text({
+        font: "gothic-18",
+        textAlign: "center",
+        text: "Sig Noise: " + propinfo.solar.solardata.signalnoise,
+        position: new v2(0,pos),
+        size: new v2(144,18),
+        color: 'black'
+    }));
+    pos += 18;
+    conds.add(new UI.Text({
+        font: "gothic-18",
+        textAlign: "center",
+        text: "MUF: " + propinfo.solar.solardata.muf + "MHz",
+        position: new v2(0,pos),
+        size: new v2(144,18),
+        color: 'black'
+    }));
+    pos = 132;
+    conds.add(new UI.Text({
+        font: "gothic-14",
+        textAlign: "left",
+        text: "Data: N0NBH",
+        position: new v2(0,pos),
+        size: new v2(144,14),
+        color: 'black'
+    }));
+    conds.add(new UI.Text({
+        font: "gothic-14",
+        textAlign: "right",
+        text: "hamqsl.com",
+        position: new v2(0,pos),
+        size: new v2(144,14),
+        color: 'black'
+    }));
+    conds.show();
+    loading.hide();
 }
 
-get_data();
+loading.on('show',function() {
+    get_data();
+});
+
+loading.show();
 
